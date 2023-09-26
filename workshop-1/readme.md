@@ -375,7 +375,7 @@ leo run transfer "aleo1jk6w8vcz3uaxqq9kmt8ma6pr4ql4lk78mudw9cmdel2r0n9l05xsxayd2
 }"
 ```
 
-We do not provide the types and just pass the literal values, **\*\***\*\***\*\***adding back in the suffixes**\*\***\*\***\*\***.
+We do not provide the types and just pass the literal values, **adding back in the suffixes**.
 
 # Deploying
 
