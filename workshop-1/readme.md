@@ -1,6 +1,10 @@
 # Course - Workshop
 
-# Aleo Runthrough
+## Video Guide
+
+[![Follow-along video](https://img.youtube.com/vi/dyv6lorra-g/0.jpg)](https://www.youtube.com/watch?v=dyv6lorra-g)
+
+## Aleo Runthrough
 
 In this workshop we will go through the basics of working with zero knowledge proofs, Aleo, and how to build private applications using the Aleo network.
 
