@@ -2,7 +2,7 @@
 
 ## Video Guide
 
-[![Follow-along video](https://img.youtube.com/vi/dyv6lorra-g/0.jpg)](https://www.youtube.com/watch?v=dyv6lorra-g)
+[![Follow-along video](https://img.youtube.com/vi/DFWTB52KRLw/0.jpg)](https://www.youtube.com/watch?v=DFWTB52KRLw)
 
 ## Aleo Runthrough
 
