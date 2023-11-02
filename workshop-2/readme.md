@@ -41,9 +41,7 @@ The fundamental data structure to store private data is a `record`. You will see
 
 ```    
 record token {
-    // The token owner.
     owner: address,
-    // The token amount.
     amount: u64,
 }
 ```
@@ -117,7 +115,6 @@ finalize transfer_public(public sender: address, public receiver: address, publi
     let receiver_amount: u64 = Mapping::get_or_use(account, receiver, 0u64);
     Mapping::set(account, receiver, receiver_amount + amount);
 }
-
 ```
 Finalize functions are executed by the nodes of the network.
 
@@ -141,6 +138,6 @@ finalize transfer_private_to_public(public receiver: address, public amount: u64
     let current_amount: u64 = Mapping::get_or_use(account, receiver, 0u64);
     Mapping::set(account, receiver, current_amount + amount);
 }
-
 ```
 In the above example we calculate the remainder (change) privately within the transition, but increase the receivers balance publicly within the `finalize`. 
+The finalize will not be executed if the zero knowledge proof of the `transition` fails to validate. Additionally, any change of state will be reverted if there are any failures during `finalize`. 
