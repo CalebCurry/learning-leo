@@ -1,7 +1,7 @@
 ## Learning Leo
 
 This workshop will focus on the leo programming language.
-Leo is a high level language that is compiled to Aleo instructions.
+Leo is a high level language that is compiled to Aleo instructions, which is serialized to AVM bytecode. This bytecode is deployed on chain and is visible by anyone. AVM is executed by the Aleo virtual machine by users of the smart contract. 
 
 You can get your leo version with:
 
@@ -120,6 +120,8 @@ Finalize functions are executed by the nodes of the network.
 
 In this case, the transition only invokes the finalize which subtracts `amount` from the sender and adds it to the receiver.
 
+We are using `Mapping::get_or_use` which takes 3 arguments. The first is the mapping, the second is the key to search for, and the third is a default value if not found. 
+
 As interactions can involve both private and public state, the combination of a transition and a finalize function allows us to do things like transfer from private to public.
 
 ```
@@ -141,3 +143,62 @@ finalize transfer_private_to_public(public receiver: address, public amount: u64
 ```
 In the above example we calculate the remainder (change) privately within the transition, but increase the receivers balance publicly within the `finalize`. 
 The finalize will not be executed if the zero knowledge proof of the `transition` fails to validate. Additionally, any change of state will be reverted if there are any failures during `finalize`. 
+
+## Trying Our Example
+
+We can execute this locally by first acquiring a wallet address. You can do this by retrieving it from the `.env` file or generating a new one with 
+
+```
+leo account new
+```
+
+Now, mint a record:
+
+```
+leo run mint_private aleo104ekeaps2995cqyqt9hgjlnpgnxtxuc2elcj6uchpnw0gsvv3vpqd45z4f 10u64
+```
+
+We can mint publicly with:
+
+```
+leo run mint_public aleo104ekeaps2995cqyqt9hgjlnpgnxtxuc2elcj6uchpnw0gsvv3vpqd45z4f 10u64
+```
+
+## Structs and Records
+
+Both structs and records allow you to define your own data structure. The primary difference in purpose between them is that records are stored privately on chain. If you need to group data together for organization in your code, you can use a struct. If instead you need to store private data on-chain, use a record. 
+
+The syntax is fairly similar, too, but an additional requirement is that **a `record` must have an owner**. 
+
+An example of a struct can be seen in the [tic-tac-toe example](https://github.com/AleoHQ/workshop/blob/f1738a733bad682a92d3b65727bde0537ecc7585/tictactoe/src/main.leo#L9), where a struct is used to group data.
+
+Let's go through this example by creating a new example project. Outside of our current project we will create a new project:
+
+```
+leo example tictactoe
+cd tictactoe
+. ./run.sh 
+```
+
+This will go through an example step by step of this game. 
+
+## Transitions and Functions
+
+We have seen transitions already which describe the external interface of your contract. These can take records as input and give records as outputs. When end-users interact with the deployed contract it will be by invoking various transitions. 
+
+An example transition function in the tic tac toe example is  `make_move`:
+
+```
+transition make_move(player: u8, row: u8, col: u8, board: Board) -> (Board, u8) 
+```
+This takes the player (`1` or `2`), the row and column, as well as the current board. This will return a new board and a number indicating who won (0 if no one yet).
+
+Functions work as they would in other programming languages. They identify some section of code by name and allow for parameters and return data (although they cannot return records). This can be useful for organizing your program. 
+
+In this example, we invoke a function `check_for_win`:
+
+```
+function check_for_win(b: Board, p: u8) -> bool 
+```
+
+This takes a board and a player. It returns true or false if the player has won. This function returns a boolean, but you can return almost any type... The only thing is that you cannot return a record from a function. As a record is state stored on chain, you will use a transition function if you need to return a record. 

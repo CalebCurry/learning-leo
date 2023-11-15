@@ -53,6 +53,12 @@ program token.aleo {
         Mapping::set(account, receiver, receiver_amount + amount);
     }
 
+    function foo(
+    a: field,
+    b: field,
+) -> field {
+    return a + b;
+}
     // The function `transfer_private` sends the specified token amount to the token receiver from the specified token record.
     transition transfer_private(sender: token, receiver: address, amount: u64) -> (token, token) {
         // Checks the given token record has sufficient balance.

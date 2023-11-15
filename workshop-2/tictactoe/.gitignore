@@ -3,6 +3,3 @@
 *.prover
 *.verifier
 outputs/
-build
-.DS_Store
-.private
