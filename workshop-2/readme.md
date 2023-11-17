@@ -202,3 +202,5 @@ function check_for_win(b: Board, p: u8) -> bool
 ```
 
 This takes a board and a player. It returns true or false if the player has won. This function returns a boolean, but you can return almost any type... The only thing is that you cannot return a record from a function. As a record is state stored on chain, you will use a transition function if you need to return a record. 
+
+Structs are not the choice for storing state onchain, rather you should use a record as seen in the [battleship example](https://github.com/AleoHQ/workshop/blob/master/battleship/imports/board.leo#L10C22-L10C22) which also has a board but maintains the board state in a record. This example acts as a good first step to understanding Leo, but lacks features introduced in the battleship example. 
