@@ -203,4 +203,121 @@ function check_for_win(b: Board, p: u8) -> bool
 
 This takes a board and a player. It returns true or false if the player has won. This function returns a boolean, but you can return almost any type... The only thing is that you cannot return a record from a function. As a record is state stored on chain, you will use a transition function if you need to return a record. 
 
-Structs are not the choice for storing state onchain, rather you should use a record as seen in the [battleship example](https://github.com/AleoHQ/workshop/blob/master/battleship/imports/board.leo#L10C22-L10C22) which also has a board but maintains the board state in a record. This example acts as a good first step to understanding Leo, but lacks features introduced in the battleship example. 
+Structs are not the choice for storing state onchain, rather you should use a record as seen in the [battleship example](https://github.com/AleoHQ/workshop/blob/master/battleship/imports/board.leo#L10C22-L10C22) which also has a board but maintains the board state in a record. The tic tac toe example acts as a good first step to understanding Leo, but lacks features introduced in the battleship example. 
+
+## Arrays
+
+Arrays are available in Leo to allow you to easily store multiple values. We can learn the arry syntax while rewriting the tic tac toe example. 
+
+```
+struct Board {
+    data: [[u8; 3]; 3]
+}
+```
+
+This defines a board structure containing a 3x3 array. 
+
+We can craft this within a call to `new`:
+
+```
+transition new() -> Board {
+    return Board {
+        data: 
+        [[ 0u8, 0u8, 0u8 ],
+        [ 0u8, 0u8, 0u8 ],
+        [ 0u8, 0u8, 0u8 ]],
+    };
+}
+```
+Here is the starter code for the whole project using an array. Arrays are static in both size and cotent, so we have to do some extra work to use them as seen in `make_move`: 
+
+```
+program tictactoe.aleo {
+
+ struct Board {
+       data: [[u8; 3]; 3]
+    }
+
+    // Returns an empty board.
+    transition new() -> Board {
+        return Board {
+            data: 
+            [[ 0u8, 0u8, 0u8 ],
+            [ 0u8, 0u8, 0u8 ],
+            [ 0u8, 0u8, 0u8 ]],
+        };
+    }
+
+function check_for_win(board: Board, p: u8) -> bool {
+    let b: [[u8; 3]; 3] = board.data;
+    return (b[0u8][0u8] == p && b[0u8][1u8] == p && b[0u8][2u8] == p) || // row 1
+           (b[1u8][0u8] == p && b[1u8][1u8] == p && b[1u8][2u8] == p) || // row 2
+           (b[2u8][0u8] == p && b[2u8][1u8] == p && b[2u8][2u8] == p) || // row 3
+           (b[0u8][0u8] == p && b[1u8][0u8] == p && b[2u8][0u8] == p) || // column 1
+           (b[0u8][1u8] == p && b[1u8][1u8] == p && b[2u8][1u8] == p) || // column 2
+           (b[0u8][2u8] == p && b[1u8][2u8] == p && b[2u8][2u8] == p) || // column 3
+           (b[0u8][0u8] == p && b[1u8][1u8] == p && b[2u8][2u8] == p) || // diagonal
+           (b[0u8][2u8] == p && b[1u8][1u8] == p && b[2u8][0u8] == p);   // other diagonal
+}
+ 
+    //leo run make_move 1u8 2u8 3u8 " { data: [[1u8, 0u8, 0u8],[2u8, 2u8, 0u8],[1u8, 0u8, 0u8]]}"
+    transition make_move(player: u8, row: u8, col: u8, board: Board) -> (Board, u8){   
+        //Check that inputs are valid.
+        assert(player == 1u8 || player == 2u8);
+        assert(1u8 <= row && row <= 3u8);
+        assert(1u8 <= col && col <= 3u8);
+        let b: [[u8; 3]; 3] = board.data;
+    
+        let r1c1: u8 = b[0u8][0u8];
+        let r1c2: u8 = b[0u8][1u8];
+        let r1c3: u8 = b[0u8][2u8];
+        let r2c1: u8 = b[1u8][0u8];
+        let r2c2: u8 = b[1u8][1u8];
+        let r2c3: u8 = b[1u8][2u8];
+        let r3c1: u8 = b[2u8][0u8];
+        let r3c2: u8 = b[2u8][1u8];
+        let r3c3: u8 = b[2u8][2u8];
+
+        if row == 1u8 && col == 1u8 && r1c1 == 0u8 {
+            r1c1 = player;
+        } else if row == 1u8 && col == 2u8 && r1c2 == 0u8  {
+            r1c2 = player;
+        } else if row == 1u8 && col == 3u8 && r1c3 == 0u8 {
+            r1c3 = player;
+        } else if row == 2u8 && col == 1u8 && r2c1 == 0u8 {
+            r2c1 = player;
+        } else if row == 2u8 && col == 2u8 && r2c2 == 0u8 {
+            r2c2 = player;
+        } else if row == 2u8 && col == 3u8 && r2c3 == 0u8 {
+            r2c3 = player;
+        } else if row == 3u8 && col == 1u8 && r3c1 == 0u8 {
+            r3c1 = player;
+        } else if row == 3u8 && col == 2u8 && r3c2 == 0u8 {
+            r3c2 = player;
+        } else if row == 3u8 && col == 3u8 && r3c3 == 0u8 {
+            r3c3 = player;
+        }
+
+        let updated: Board = Board { data: 
+        [[ r1c1, r1c2, r1c3 ],
+        [ r2c1, r2c2, r2c3 ],
+        [ r3c1, r3c2, r3c3 ],
+        ]};
+
+     // Check if the game is over.
+        if check_for_win(updated, 1u8) {
+            return (updated, 1u8);
+        } else if check_for_win(updated, 2u8) {
+            return (updated, 2u8);
+        } else {
+            return (updated, 0u8);
+        }
+    }
+}
+```
+
+An example call would be:
+
+```
+leo run make_move 1u8 2u8 3u8 "{ data: [[1u8, 0u8, 0u8],[2u8, 2u8, 0u8],[1u8, 0u8, 0u8]]}"
+```    
